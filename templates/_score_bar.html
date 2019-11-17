@@ -21,6 +21,25 @@
     }
 </style>
 
+<script>
+    update_score_box = function(score, square, id){
+        var score_box = document.getElementById(id);
+        if (score == 1) {
+            score_box.style['background-color'] = '#28a745';
+        }
+        if (score == -1) {
+            score_box.style['background-color'] = '#dc3545';
+        }
+        score_box.innerHTML = square;
+    };
+
+    update_score_bar = function(scores, squares){
+        for (var i=0; i<12; i++) {
+            update_score_box(scores[i], squares[i], 'score' + i);
+        }
+    };
+</script>
+
 <div class="row score-bar" >
     {% for id in range(0, 12) %}
     {% include '_score_box.html' %}

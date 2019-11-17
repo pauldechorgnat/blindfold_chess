@@ -20,7 +20,6 @@ def colors():
 
 @socketio.on('check_color')
 def check_color(data):
-    print(data)
     if color_cases[data['square']] == data['color']:
         response = 'Good!'
     else:
