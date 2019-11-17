@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block app_content %}
+
+
+<div class="row">
+    <h3>Choose the color of the square</h3>
+</div>
+
+
+<div class="row" style="padding-bottom:20px;">
+    <div class="col-lg-5 col-sm-5 col-md-5 col-md-5"></div>
+    <div class="col-lg-2 col-sm-2 col-md-2 col-md-2">
+        <button class="btn btn-secondary" id="square" style="width:100%">a1</button>
+    </div>
+    <div class="col-lg-5 col-sm-5 col-md-5 col-md-5">
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-12 col-sm-12 col-md-12 col-md-12">
+        <div class="card-deck">
+            <div class="card"
+                 onclick="check_color(0, document.getElementById('square').innerHTML); return false;">
+                <div class="card-body">
+                    <h5 class="card-title">Light Square</h5>
+                    <p class="card-text">Click here if you think that the square is light.</p>
+                </div>
+            </div>
+
+            <div class="card text-white bg-dark"
+                 onclick="check_color(1, document.getElementById('square').innerHTML); return false;">
+                <div class="card-body">
+                    <h5 class="card-title">Dark Square</h5>
+                    <p class="card-text">Click here if you think that the square is dark.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% include '_score_bar.html' %}
+
+
+{% endblock %}
