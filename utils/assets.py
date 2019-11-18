@@ -51,11 +51,13 @@ def compute_bishop_moves(path='./bishop_moves.json'):
                         moves.append((bishop_x - x, bishop_y - y))
 
             square = file_names[bishop_x] + row_names[bishop_y]
-            bishop_moves[square] = [file_names[x] + row_names[y] for x, y in moves if file_names[x] + row_names[y] != square]
+            bishop_moves[square] = [file_names[x] + row_names[y] for x, y in moves if
+                                    file_names[x] + row_names[y] != square]
     if path is not None:
         with open(path, 'w') as file:
             json.dump(bishop_moves, file)
     return bishop_moves
+
 
 def compute_knight_moves(path='./knight_moves.json'):
     knight_moves = {}
@@ -64,25 +66,25 @@ def compute_knight_moves(path='./knight_moves.json'):
             moves = []
             for x in [-1, 1]:
                 for y in [-2, 2]:
-                    if knight_x + x < 8 and knight_x + x >=0:
-                        if knight_y + y < 8 and knight_y + y >=0:
+                    if knight_x + x < 8 and knight_x + x >= 0:
+                        if knight_y + y < 8 and knight_y + y >= 0:
                             moves.append((knight_x + x, knight_y + y))
                         if knight_y - y >= 0 and knight_y - y < 8:
                             moves.append((knight_x + x, knight_y - y))
-                    if knight_x - x >= 0  and knight_x - x < 8:
-                        if knight_y + y < 8 and knight_y + y >=0:
+                    if knight_x - x >= 0 and knight_x - x < 8:
+                        if knight_y + y < 8 and knight_y + y >= 0:
                             moves.append((knight_x - x, knight_y + y))
                         if knight_y - y >= 0 and knight_y - y < 8:
                             moves.append((knight_x - x, knight_y - y))
             for x in [-2, 2]:
                 for y in [-1, 1]:
-                    if knight_x + x < 8  and knight_x + x >=0:
-                        if knight_y + y < 8 and knight_y + y >=0:
+                    if knight_x + x < 8 and knight_x + x >= 0:
+                        if knight_y + y < 8 and knight_y + y >= 0:
                             moves.append((knight_x + x, knight_y + y))
                         if knight_y - y >= 0 and knight_y - y < 8:
                             moves.append((knight_x + x, knight_y - y))
                     if knight_x - x >= 0 and knight_x - x < 8:
-                        if knight_y + y < 8 and knight_y + y >=0:
+                        if knight_y + y < 8 and knight_y + y >= 0:
                             moves.append((knight_x - x, knight_y + y))
                         if knight_y - y >= 0 and knight_y - y < 8:
                             moves.append((knight_x - x, knight_y - y))
@@ -91,22 +93,47 @@ def compute_knight_moves(path='./knight_moves.json'):
             pprint.pprint(square)
             pprint.pprint(moves)
 
-            knight_moves[square] = list(set([file_names[x] + row_names[y] for x, y in moves if file_names[x] + row_names[y] != square]))
+            knight_moves[square] = list(
+                set([file_names[x] + row_names[y] for x, y in moves if file_names[x] + row_names[y] != square]))
     if path is not None:
         with open(path, 'w') as file:
             json.dump(knight_moves, file)
     return knight_moves
 
+
+def compute_knight_two_steps_moves(path_to_knight_moves='./knight_moves.json', path='./knight_two_steps_moves.json'):
+    knight_moves = load_knight_moves(path=path_to_knight_moves)
+    knight_moves_two_steps = {}
+    for start_square in knight_moves.keys():
+        moves = []
+        for stop_square in knight_moves[start_square]:
+            moves.extend(knight_moves[stop_square])
+        knight_moves_two_steps[start_square] = list(set(moves))
+
+    with open(path, 'w') as file:
+        json.dump(knight_moves_two_steps, file)
+    return knight_moves_two_steps
+
+
 def load_bishop_moves(path='./bishop_moves.json'):
     with open(path, 'r') as file:
         return json.load(file)
+
 
 def load_knight_moves(path='./knight_moves.json'):
     with open(path, 'r') as file:
         return json.load(file)
 
+
+def load_knight_two_steps_moves(path='./knight_two_steps_moves.json'):
+    with open(path, 'r') as file:
+        return json.load(file)
+
+
 if __name__ == '__main__':
     import pprint
-    bishop_moves = compute_bishop_moves(path='./bishop_moves.json')
-    knight_moves = compute_knight_moves(path='./knight_moves.json')
-    pprint.pprint(knight_moves)
+
+    bishop_moves_ = compute_bishop_moves(path='./bishop_moves.json')
+    knight_moves_ = compute_knight_moves(path='./knight_moves.json')
+    knight_two_steps_moves_ = compute_knight_two_steps_moves(path='./knight_two_steps_moves.json')
+    pprint.pprint(knight_two_steps_moves_)

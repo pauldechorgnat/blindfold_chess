@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block app_content %}
+
+<script>
+    var socket = io();
+
+    check_knight_two_steps_move = function(decision){
+        var start = document.getElementById('start').innerHTML;
+        var stop = document.getElementById('stop').innerHTML;
+
+        socket.emit('check_knight_two_steps_move', {
+            'old_start': start,
+            'old_stop': stop,
+            'decision': decision
+        });
+    };
+
+    socket.on('knight_two_steps_move_checked',
+        function(data){
+            document.getElementById('start').innerHTML = data['new_start'];
+            document.getElementById('stop').innerHTML = data['new_stop'];
+            scores = scores.concat(data['score']);
+            scores = scores.slice(1, 13);
+            squares_score = squares_score.concat(data['old_start'] + '-' + data['old_stop']);
+            squares_score = squares_score.slice(1, 13);
+            update_score_bar(scores, squares_score);
+            }
+    );
+
+</script>
+
+
+<div class="row">
+    <h3>Check if the knight can move in two steps.</h3>
+</div>
+
+
+<div class="row" style="padding-bottom:20px;">
+    <div class="col-lg-3 col-sm-3 col-md-3 col-md-3"></div>
+    <div class="col-lg-2 col-sm-2 col-md-2 col-md-2">
+        <button class="btn btn-secondary" id="start" style="width:100%">a1</button>
+    </div>
+    <div class="col-lg-2 col-sm-2 col-md-2 col-md-2"></div>
+    <div class="col-lg-2 col-sm-2 col-md-2 col-md-2">
+        <button class="btn btn-secondary" id="stop" style="width:100%">a1</button>
+    </div>
+    <div class="col-lg-3 col-sm-3 col-md-3 col-md-3"></div>
+</div>
+
+<div class="row">
+    <div class="col-lg-12 col-sm-12 col-md-12 col-md-12">
+        <div class="card-deck">
+            <div class="card"
+                 onclick="check_knight_two_steps_move(1); return false;">
+                <div class="card-body">
+                    <h5 class="card-title">The knight can move.</h5>
+                    <p class="card-text">Click here if you think that the knight can go from the start square to the
+                        stop square in two steps.</p>
+                </div>
+            </div>
+
+            <div class="card text-white bg-dark"
+                 onclick="check_knight_two_steps_move(0); return false;">
+                <div class="card-body">
+                    <h5 class="card-title">The knight cannot move.</h5>
+                    <p class="card-text">Click here if you think that the knight cannot go from the start square to the
+                        stop square in two steps.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% include '_score_bar.html' %}
+
+
+{% endblock %}
