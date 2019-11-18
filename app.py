@@ -14,13 +14,18 @@ def index():
 
 
 @app.route('/colors')
-def colors():
+def colors_exercise():
     return render_template('colors.html')
 
 
 @app.route('/bishop_moves')
-def bishop_moves():
+def bishop_moves_exercise():
     return render_template('bishop_moves.html')
+
+@app.route('/knight_moves')
+def knight_moves_exercise():
+    return render_template('knight_moves.html')
+
 
 
 @socketio.on('check_color')
