@@ -1,10 +1,13 @@
 from flask import Flask, render_template, flash
 from flask_socketio import SocketIO
-from utils.assets import color_cases, load_bishop_moves
+from utils.assets import color_cases, load_bishop_moves, load_knight_moves
 import random
 
 app = Flask(__name__)
 socketio = SocketIO(app=app)
+
+bishop_moves = load_bishop_moves()
+knight_moves = load_knight_moves()
 
 
 @app.route('/')
@@ -22,10 +25,10 @@ def colors_exercise():
 def bishop_moves_exercise():
     return render_template('bishop_moves.html')
 
+
 @app.route('/knight_moves')
 def knight_moves_exercise():
     return render_template('knight_moves.html')
-
 
 
 @socketio.on('check_color')
@@ -54,7 +57,6 @@ def check_bishop_move(data):
     old_stop = data['old_stop']
     old_start = data['old_start']
     decision = data['decision']
-    bishop_moves = load_bishop_moves()
 
     available_moves = bishop_moves[old_start]
     if ((old_stop in available_moves) and (decision == 1)) or ((old_stop not in available_moves) and (decision == 0)):
@@ -71,6 +73,38 @@ def check_bishop_move(data):
         new_stop = random.choice(list(color_cases.keys()))
 
     socketio.emit('bishop_move_checked',
+                  {
+                      'new_start': new_start,
+                      'new_stop': new_stop,
+                      'response': response,
+                      'score': score,
+                      'old_start': old_start,
+                      'old_stop': old_stop
+                  }
+                  )
+
+
+@socketio.on('check_knight_move')
+def check_knight_move(data):
+    old_stop = data['old_stop']
+    old_start = data['old_start']
+    decision = data['decision']
+
+    available_moves = knight_moves[old_start]
+    if ((old_stop in available_moves) and (decision == 1)) or ((old_stop not in available_moves) and (decision == 0)):
+        response = 'Good!'
+        score = 1
+    else:
+        response = 'Wrong!'
+        score = -1
+    flash(response)
+    new_start = random.choice(list(color_cases.keys()))
+    if random.uniform(0, 1) > .6:
+        new_stop = random.choice(list(knight_moves[new_start]))
+    else:
+        new_stop = random.choice(list(color_cases.keys()))
+
+    socketio.emit('knight_move_checked',
                   {
                       'new_start': new_start,
                       'new_stop': new_stop,
