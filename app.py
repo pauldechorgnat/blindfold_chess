@@ -19,22 +19,26 @@ def index():
 
 @app.route('/colors')
 def colors_exercise():
-    return render_template('colors.html')
+    return render_template('colors.html',
+                           title='Square Color exercise')
 
 
 @app.route('/bishop_moves')
 def bishop_moves_exercise():
-    return render_template('bishop_moves.html')
+    return render_template('bishop_moves.html',
+                           title='Bishop Moves exercise')
 
 
 @app.route('/knight_moves')
 def knight_moves_exercise():
-    return render_template('knight_moves.html')
+    return render_template('knight_moves.html',
+                           title='Knight Moves I exercise')
 
 
 @app.route('/knight_moves2')
 def knight_two_steps_moves_exercise():
-    return render_template('knight_moves_two_steps.html')
+    return render_template('knight_moves_two_steps.html',
+                           title='Knight Moves II exercise')
 
 
 @socketio.on('check_color')
