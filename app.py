@@ -6,9 +6,6 @@ import random
 app = Flask(__name__)
 socketio = SocketIO(app=app)
 
-bishop_moves = load_bishop_moves()
-print(type(bishop_moves))
-
 
 @app.route('/')
 @app.route('/index')
@@ -49,12 +46,11 @@ def check_color(data):
 
 @socketio.on('check_bishop_move')
 def check_bishop_move(data):
-    print(data)
     old_stop = data['old_stop']
     old_start = data['old_start']
     decision = data['decision']
     bishop_moves = load_bishop_moves()
-    print(type(bishop_moves))
+
     available_moves = bishop_moves[old_start]
     if ((old_stop in available_moves) and (decision == 1)) or ((old_stop not in available_moves) and (decision == 0)):
         response = 'Good!'
@@ -65,7 +61,6 @@ def check_bishop_move(data):
     flash(response)
     new_start = random.choice(list(color_cases.keys()))
     new_stop = random.choice(list(color_cases.keys()))
-
 
     socketio.emit('bishop_move_checked',
                   {
@@ -80,4 +75,4 @@ def check_bishop_move(data):
 
 
 if __name__ == '__main__':
-    socketio.run(app, debug=True)
+    socketio.run(app)
