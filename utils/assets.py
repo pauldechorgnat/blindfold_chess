@@ -1,7 +1,8 @@
+import json
+import numpy as np
+
 # images:
 # https://images.chesscomfiles.com/chess-themes/pieces/neo/80/wp.png
-
-import numpy as np
 
 file_names = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
 row_names = ['1', '2', '3', '4', '5', '6', '7', '8']
@@ -31,34 +32,36 @@ bishop_moves = {}
 
 # for bishop_x in range(8):
 #     for bishop_y in range(8):
-for bishop_x in range(8):
-    for bishop_y in range(8):
-        moves = []
-        for x in range(8):
-            y = x
+def compute_bishop_moves(path='./bishop_moves.json'):
+    for bishop_x in range(8):
+        for bishop_y in range(8):
+            moves = []
+            for x in range(8):
+                y = x
 
-            if bishop_x + x < 8:
-                if bishop_y + y < 8:
-                    moves.append((bishop_x + x, bishop_y + y))
-                if bishop_y - y >= 0:
-                    moves.append((bishop_x + x, bishop_y - y))
-            if bishop_x - x >= 0:
-                if bishop_y + y < 8:
-                    moves.append((bishop_x - x, bishop_y + y))
-                if bishop_y - y >= 0:
-                    moves.append((bishop_x - x, bishop_y - y))
+                if bishop_x + x < 8:
+                    if bishop_y + y < 8:
+                        moves.append((bishop_x + x, bishop_y + y))
+                    if bishop_y - y >= 0:
+                        moves.append((bishop_x + x, bishop_y - y))
+                if bishop_x - x >= 0:
+                    if bishop_y + y < 8:
+                        moves.append((bishop_x - x, bishop_y + y))
+                    if bishop_y - y >= 0:
+                        moves.append((bishop_x - x, bishop_y - y))
 
-        square = file_names[bishop_x] + row_names[bishop_y]
-        bishop_moves[square] = [file_names[x] + row_names[y] for x, y in moves if file_names[x] + row_names[y] != square]
-        # print(square, len(bishop_moves[square]))
+            square = file_names[bishop_x] + row_names[bishop_y]
+            bishop_moves[square] = [file_names[x] + row_names[y] for x, y in moves if file_names[x] + row_names[y] != square]
+    if path is not None:
+        with open(path, 'w') as file:
+            json.dump(bishop_moves, file)
+    return bishop_moves
+
+def load_bishop_moves(path='./bishop_moves.json'):
+    with open(path, 'r') as file:
+        return json.load(file)
+
 
 if __name__ == '__main__':
-    import pprint
+    bishop_moves = compute_bishop_moves(path='./bishop_moves.json')
 
-    # pprint.pprint(files)
-    # pprint.pprint(cases)
-    # pprint.pprint(colors)
-    # print(square_indices)
-    # print(diagonals[::-1])
-    # pprint.pprint(bishop_moves)
-    # pprint.pprint(color_cases)
