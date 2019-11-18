@@ -57,7 +57,7 @@ def check_bishop_move(data):
         score = 1
     else:
         response = 'Wrong!'
-        score = 0
+        score = -1
     flash(response)
     new_start = random.choice(list(color_cases.keys()))
     new_stop = random.choice(list(color_cases.keys()))
