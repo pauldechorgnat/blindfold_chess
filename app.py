@@ -60,7 +60,10 @@ def check_bishop_move(data):
         score = -1
     flash(response)
     new_start = random.choice(list(color_cases.keys()))
-    new_stop = random.choice(list(color_cases.keys()))
+    if random.uniform(0, 1) > .6:
+        new_stop = random.choice(list(bishop_moves[new_start]))
+    else:
+        new_stop = random.choice(list(color_cases.keys()))
 
     socketio.emit('bishop_move_checked',
                   {
