@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block app_content %}
+<!--<script src="https://requirejs.org/docs/release/2.3.5/minified/require.js"></script>-->
+<!--<script>-->
+<!--var Chessground = require(["/static/chessground"]).Chessground;-->
+<!--</script>-->
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+
+<link rel="stylesheet"
+      href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css"
+      integrity="sha384-q94+BZtLrkL1/ohfjR8c6L+A6qzNH9R2hBLwyoAfu3i/WCvQjzL2RQJ3uNHDISdU"
+      crossorigin="anonymous">
+<script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"
+        integrity="sha384-8Vi8VHwn3vjQ9eUHUxex3JSN/NFqUg3QbPyX8kWyb93+8AC/pPWTzj+nHtbC5bxD"
+        crossorigin="anonymous"></script>
+<div class="row">
+    <h1>Lol</h1>
+</div>
+<div class="row">
+    <div class="col-lg-6 col-sm-6 col-md-6 col-md-6">
+        <div id="myBoard" class="board" style="width: 100%"></div>
+    </div>
+    <div class="col-lg-6 col-sm-6 col-md-6 col-md-6">
+        <div class="form-group row">
+            <label for="example-number-input" class="col-6 col-form-label">Number of moves per step</label>
+            <div class="col-6">
+                <input class="form-control" type="number" value="3" id="example-number-input">
+            </div>
+        </div>
+        <div class="row">
+            <button class="btn btn-dark" style="width:100%">Generate next moves PGN</button>
+        </div>
+        <div class="row">
+            <button class="btn btn-default" style="width:100%">Other Game</button>
+        </div>
+        <div class="row" style="margin-top:10%">
+            <div class="card" style="width:100%;">
+                <div class="card-header">
+                    <div class="card-title">
+                        Moves
+                    </div>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item" id="past-pgn"></li>
+                        <li class="list-group-item" id="new-pgn"></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var board = Chessboard('myBoard',
+    {
+    position: 'start',
+    dropOffBoard: 'trash',
+    draggable: true,
+    moveSpeed: 'slow',
+    snapbackSpeed: 500,
+    snapSpeed: 100,
+    pieceTheme: '/static/img/chesspieces/wikipedia/{piece}.png'
+  })
+
+
+
+
+</script>
+
+
+{% endblock %}

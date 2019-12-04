@@ -40,6 +40,10 @@ def knight_two_steps_moves_exercise():
     return render_template('knight_moves_two_steps.html',
                            title='Knight Moves II exercise')
 
+@app.route('/test')
+def test():
+    return render_template('visualization_test.html')
+
 
 @socketio.on('check_color')
 def check_color(data):
@@ -159,4 +163,4 @@ def check_knight_two_steps_move(data):
 
 
 if __name__ == '__main__':
-    socketio.run(app)
+    socketio.run(app, debug=True)
