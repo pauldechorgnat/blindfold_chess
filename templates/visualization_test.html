@@ -20,25 +20,26 @@
 <div class="row">
     <div class="col-lg-6 col-sm-6 col-md-6 col-md-6">
         <div id="myBoard" class="board" style="width: 100%"></div>
+        <div id="pgn" style="display:none;"></div>
     </div>
     <div class="col-lg-6 col-sm-6 col-md-6 col-md-6">
         <div class="form-group row">
-            <label for="example-number-input" class="col-6 col-form-label">Number of moves per step</label>
+            <label for="number-input" class="col-6 col-form-label">Number of moves per step</label>
             <div class="col-6">
-                <input class="form-control" type="number" value="3" id="example-number-input">
+                <input class="form-control" type="number" value="3" id="number-input">
             </div>
         </div>
         <div class="row">
-            <button class="btn btn-dark" style="width:100%">Generate next moves PGN</button>
+            <button class="btn btn-dark" style="width:100%" onclick="generate_new_moves_button();">Generate next moves PGN</button>
         </div>
         <div class="row">
-            <button class="btn btn-default" style="width:100%">Other Game</button>
+            <button class="btn btn-default" style="width:100%" onclick="create_new_game();">Other Game</button>
         </div>
         <div class="row" style="margin-top:10%">
             <div class="card" style="width:100%;">
                 <div class="card-header">
                     <div class="card-title">
-                        Moves
+                        Moves <span style="float:right"><span id="steps">0</span>/<span id="total_steps">100</span> </span>
                     </div>
                 </div>
                 <div class="card-body">
@@ -64,7 +65,67 @@
     pieceTheme: '/static/img/chesspieces/wikipedia/{piece}.png'
   })
 
+  var pgn = [];
+  var fens = [];
+  var fen = '';
 
+var socket = io();
+
+socket.on('new_game_render',
+    function(data){
+        pgn = data['pgn'];
+        fens = data['fens']
+        fen = '';
+        console.log(data);
+        document.getElementById('total_steps').innerHTML = data['fens'].length;
+        document.getElementById('steps').innerHTML = 0;
+        document.getElementById('past-pgn').innerHTML = '';
+        document.getElementById('new-pgn').innerHTML = '';
+        board.start();
+    }
+)
+
+create_new_game = function(){
+    socket.emit('new_game_viz');
+
+}
+
+generate_new_moves_button = function(){
+    var nb_moves = document.getElementById('number-input').value;
+    nb_moves = parseInt(nb_moves);
+    generate_new_moves(nb_moves);
+}
+
+correct_position = function(){
+    board.position(fen);
+}
+
+
+generate_new_moves = function(nb_moves) {
+
+    old_pgn = document.getElementById('old-pgn');
+    new_pgn = document.getElementById('new-pgn');
+
+    if (pgn.length == 0) {
+        console.log('pgn vide')
+        create_new_game();
+    }
+    var steps = document.getElementById('steps').innerHTML;
+    steps_num = parseInt(steps);
+    if (steps_num > pgn.length) {
+        console.log('new game');
+
+        create_new_game();
+    }
+    correct_position();
+    var new_moves = pgn.slice(steps_num, steps_num + nb_moves);
+
+    fen = fens[(steps_num + nb_moves) * 2 ];
+
+    document.getElementById('steps').innerHTML = steps_num + nb_moves;
+    document.getElementById('past-pgn').innerHTML = document.getElementById('past-pgn').innerHTML + ' ' + document.getElementById('new-pgn').innerHTML
+    document.getElementById('new-pgn').innerHTML = new_moves.join(' ');
+}
 
 
 </script>

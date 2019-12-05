@@ -1,6 +1,7 @@
 from flask import Flask, render_template, flash
 from flask_socketio import SocketIO
 from utils.assets import color_cases, load_bishop_moves, load_knight_moves, load_knight_two_steps_moves
+from utils.utils import parse_pgn
 import random
 
 app = Flask(__name__)
@@ -161,6 +162,11 @@ def check_knight_two_steps_move(data):
                   }
                   )
 
+@socketio.on('new_game_viz')
+def generate_new_game_visualization():
+    pgn, fens = parse_pgn('./static/PGN.pgn')
+
+    socketio.emit('new_game_render', {'pgn': pgn, 'fens': fens})
 
 if __name__ == '__main__':
     socketio.run(app, debug=True)
