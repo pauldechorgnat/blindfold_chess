@@ -1,15 +1,22 @@
-from flask import Flask, render_template, flash
-from flask_socketio import SocketIO
-from utils.assets import color_cases, load_bishop_moves, load_knight_moves, load_knight_two_steps_moves
-from utils.utils import parse_pgn
-import random
+from flask import Flask, render_template
+import json
 
 app = Flask(__name__)
-socketio = SocketIO(app=app)
 
-bishop_moves = load_bishop_moves()
-knight_moves = load_knight_moves()
-knight_two_steps_moves = load_knight_two_steps_moves()
+with open('static/colors.json', 'r') as file:
+    color_cases = json.load(file)
+
+with open('static/bishop_moves.json', 'r') as file:
+    bishop_moves = json.load(file)
+
+with open('static/knight_moves.json', 'r') as file:
+    knight_moves = json.load(file)
+
+with open('static/knight_two_steps_moves.json', 'r') as file:
+    knight_two_steps_moves = json.load(file)
+
+with open('static/pgns.json', 'r') as file:
+    pgns = json.load(file)
 
 
 @app.route('/')
@@ -48,19 +55,9 @@ def knight_two_steps_moves_exercise():
 
 @app.route('/test')
 def test():
-    return render_template('visualization_test.html')
-
-
-
-
-@socketio.on('new_game_visualization')
-def generate_new_game_visualization():
-    pgn, fens = parse_pgn('static/PGN1.pgn')
-    print('new_game_visualization')
-    print(pgn)
-
-    socketio.emit('new_game_render', {'pgn': pgn, 'fens': fens})
+    return render_template('visualization_test.html',
+                           pgns=pgns)
 
 
 if __name__ == '__main__':
-    socketio.run(app, debug=True)
+    app.run(debug=True)
