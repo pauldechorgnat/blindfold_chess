@@ -45,24 +45,6 @@
 
         generate_new_squares();
 
-
-    }
-
-    check_color = function(input) {
-        var square = document.getElementById('square').innerHTML
-        var right_response = colors[square];
-        if (right_response == input){
-            var response = 1;
-        } else {
-            var response = -1;
-        }
-        
-        scores = scores.concat(response).slice(1, 13);
-        squares_score = squares_score.concat(square).slice(1, 13);
-        update_score_bar(scores, squares_score);
-
-        generate_new_case();
-
     }
 
 </script>

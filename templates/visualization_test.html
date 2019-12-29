@@ -7,13 +7,11 @@
 <!--</script>-->
 <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
 
-<link rel="stylesheet"
-      href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css"
-      integrity="sha384-q94+BZtLrkL1/ohfjR8c6L+A6qzNH9R2hBLwyoAfu3i/WCvQjzL2RQJ3uNHDISdU"
-      crossorigin="anonymous">
+<link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css"
+    integrity="sha384-q94+BZtLrkL1/ohfjR8c6L+A6qzNH9R2hBLwyoAfu3i/WCvQjzL2RQJ3uNHDISdU" crossorigin="anonymous">
 <script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"
-        integrity="sha384-8Vi8VHwn3vjQ9eUHUxex3JSN/NFqUg3QbPyX8kWyb93+8AC/pPWTzj+nHtbC5bxD"
-        crossorigin="anonymous"></script>
+    integrity="sha384-8Vi8VHwn3vjQ9eUHUxex3JSN/NFqUg3QbPyX8kWyb93+8AC/pPWTzj+nHtbC5bxD"
+    crossorigin="anonymous"></script>
 <div class="row">
     <h1>Lol</h1>
 </div>
@@ -30,22 +28,24 @@
             </div>
         </div>
         <div class="row">
-            <button class="btn btn-dark" style="width:100%" onclick="generate_new_moves_button();">Generate next moves PGN</button>
+            <button class="btn btn-dark" style="width:100%" onclick="generate_next_moves();">Generate next moves
+                PGN</button>
         </div>
         <div class="row">
-            <button class="btn btn-default" style="width:100%" onclick="create_new_game();">Other Game</button>
+            <button class="btn btn-light" style="width:100%" onclick="create_new_game();">New Game</button>
         </div>
         <div class="row" style="margin-top:10%">
             <div class="card" style="width:100%;">
                 <div class="card-header">
                     <div class="card-title">
-                        Moves <span style="float:right"><span id="steps">0</span>/<span id="total_steps">100</span> </span>
+                        Moves <span style="float:right"><span id="number-of-steps">0</span>/<span
+                                id="total-number-of-steps">100</span> </span>
                     </div>
                 </div>
                 <div class="card-body">
                     <ul class="list-group list-group-flush">
-                        <li class="list-group-item" id="past-pgn"></li>
-                        <li class="list-group-item" id="new-pgn"></li>
+                        <li class="list-group-item" id="old-pgn-container"></li>
+                        <li class="list-group-item" id="new-pgn-container"></li>
                     </ul>
                 </div>
             </div>
@@ -55,78 +55,102 @@
 
 <script>
     var board = Chessboard('myBoard',
-    {
-    position: 'start',
-    dropOffBoard: 'trash',
-    draggable: true,
-    moveSpeed: 'slow',
-    snapbackSpeed: 500,
-    snapSpeed: 100,
-    pieceTheme: '/static/img/chesspieces/wikipedia/{piece}.png'
-  })
+        {
+            position: 'start',
+            dropOffBoard: 'trash',
+            draggable: true,
+            moveSpeed: 'slow',
+            snapbackSpeed: 500,
+            snapSpeed: 100,
+            pieceTheme: '/static/img/chesspieces/wikipedia/{piece}.png'
+        })
 
-  var pgn = [];
-  var fens = [];
-  var fen = '';
+    var pgn_of_the_current_game = [];
+    var fens_of_the_current_game = [];
 
-var socket = io();
+    var socket = io();
 
-socket.on('new_game_render',
-    function(data){
-        pgn = data['pgn'];
-        fens = data['fens']
-        fen = '';
-        console.log(data);
-        document.getElementById('total_steps').innerHTML = data['fens'].length;
-        document.getElementById('steps').innerHTML = 0;
-        document.getElementById('past-pgn').innerHTML = '';
-        document.getElementById('new-pgn').innerHTML = '';
-        board.start();
+    update_fens_of_the_current_game = function (new_fens) {
+        fens_of_the_current_game = new_fens;
     }
-)
 
-create_new_game = function(){
-    socket.emit('new_game_viz');
-
-}
-
-generate_new_moves_button = function(){
-    var nb_moves = document.getElementById('number-input').value;
-    nb_moves = parseInt(nb_moves);
-    generate_new_moves(nb_moves);
-}
-
-correct_position = function(){
-    board.position(fen);
-}
-
-
-generate_new_moves = function(nb_moves) {
-
-    old_pgn = document.getElementById('old-pgn');
-    new_pgn = document.getElementById('new-pgn');
-
-    if (pgn.length == 0) {
-        console.log('pgn vide')
-        create_new_game();
+    update_pgn_of_the_current_game = function (new_pgn) {
+        pgn_of_the_current_game = new_pgn;
     }
-    var steps = document.getElementById('steps').innerHTML;
-    steps_num = parseInt(steps);
-    if (steps_num > pgn.length) {
-        console.log('new game');
 
-        create_new_game();
+    update_number_of_steps = function (nb_steps) {
+        document.getElementById('number-of-steps').innerHTML = nb_steps;
     }
-    correct_position();
-    var new_moves = pgn.slice(steps_num, steps_num + nb_moves);
 
-    fen = fens[(steps_num + nb_moves) * 2 ];
+    update_total_number_of_steps = function (total_nb_of_steps) {
+        document.getElementById('total-number-of-steps').innerHTML = total_nb_of_steps;
 
-    document.getElementById('steps').innerHTML = steps_num + nb_moves;
-    document.getElementById('past-pgn').innerHTML = document.getElementById('past-pgn').innerHTML + ' ' + document.getElementById('new-pgn').innerHTML
-    document.getElementById('new-pgn').innerHTML = new_moves.join(' ');
-}
+    }
 
+    clean_pgn_containers = function () {
+        clean_old_pgn_container();
+        clean_new_pgn_container();
+    }
+
+    clean_old_pgn_container = function () {
+        update_container('old-pgn-container', '');
+    }
+
+    clean_new_pgn_container = function () {
+        update_container('new-pgn-container', '');
+    }
+
+    update_container = function (id_of_the_container, value) {
+        document.getElementById(id_of_the_container).innerHTML = value;
+    }
+
+    set_new_game_data = function (pgn_of_the_new_game, fens_of_the_new_game) {
+        update_pgn_of_the_current_game(pgn_of_the_new_game);
+        update_fens_of_the_current_game(fens_of_the_new_game);
+        update_number_of_steps(0);
+        update_total_number_of_steps(pgn_of_the_new_game.length);
+        clean_pgn_containers();
+    }
+
+    correct_game_position = function(nb_steps){
+        var current_fen = fens_of_the_current_game[nb_steps];
+        board.position(current_fen);
+    }
+
+    update_pgn = function(next_pgn){
+        console.log('update_pgn')
+        var old_pgn = document.getElementById('old-pgn-container').innerHTML;
+        var old_new_pgn = document.getElementById('new-pgn-container').innerHTML;
+        old_pgn = old_pgn + ' ' + old_new_pgn;
+        update_container('old-pgn-container', old_pgn);
+        update_container('new-pgn-container', next_pgn);
+    }
+
+    generate_next_moves = function(){
+        console.log('generate_next_moves')
+        var steps_step = parseInt(document.getElementById('number-input').value);
+        var nb_steps = parseInt(document.getElementById('number-of-steps').innerHTML);
+        console.log(steps_step)
+        console.log(nb_steps)
+        var next_pgn = pgn_of_the_current_game.slice(nb_steps, steps_step + nb_steps).join(' ');
+        document.getElementById('number-of-steps').innerHTML = nb_steps + steps_step;
+        update_pgn(next_pgn);
+    }
+
+    socket.on('new_game_render',
+        function (data) {
+            console.log(data);
+            pgn_of_the_new_game = data['pgn'];
+            fens_of_the_new_game = data['fens'];
+            set_new_game_data(pgn_of_the_new_game, fens_of_the_new_game)
+            correct_game_position(0);
+        }
+    )
+
+    create_new_game = function () {
+        socket.emit('new_game_visualization');
+        
+    }
 
 </script>
 
