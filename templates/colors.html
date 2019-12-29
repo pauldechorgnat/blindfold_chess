@@ -6,9 +6,9 @@
     var colors = {{ colors | tojson | safe }};
     var squares = Object.keys(colors);
 
-    generate_new_case = function() {
+    generate_new_square = function() {
        var new_square = squares[Math.floor(Math.random() * Math.floor(64))];
-       var square = document.getElementById('square').innerHTML = new_square;
+       document.getElementById('square').innerHTML = new_square;
     };
 
     check_color = function(input) {
@@ -19,13 +19,12 @@
         } else {
             var response = -1;
         }
-        console.log('square')
-        console.log(square)
+        
         scores = scores.concat(response).slice(1, 13);
         squares_score = squares_score.concat(square).slice(1, 13);
         update_score_bar(scores, squares_score);
 
-        generate_new_case();
+        generate_new_square();
 
     }
 </script>

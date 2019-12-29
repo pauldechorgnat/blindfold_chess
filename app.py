@@ -43,42 +43,10 @@ def knight_two_steps_moves_exercise():
     return render_template('knight_moves_two_steps.html',
                            title='Knight Moves II exercise')
 
+
 @app.route('/test')
 def test():
     return render_template('visualization_test.html')
-
-
-
-@socketio.on('check_bishop_move')
-def check_bishop_move(data):
-    old_stop = data['old_stop']
-    old_start = data['old_start']
-    decision = data['decision']
-
-    available_moves = bishop_moves[old_start]
-    if ((old_stop in available_moves) and (decision == 1)) or ((old_stop not in available_moves) and (decision == 0)):
-        response = 'Good!'
-        score = 1
-    else:
-        response = 'Wrong!'
-        score = -1
-    flash(response)
-    new_start = random.choice(list(color_cases.keys()))
-    if random.uniform(0, 1) > .6:
-        new_stop = random.choice(list(bishop_moves[new_start]))
-    else:
-        new_stop = random.choice(list(color_cases.keys()))
-
-    socketio.emit('bishop_move_checked',
-                  {
-                      'new_start': new_start,
-                      'new_stop': new_stop,
-                      'response': response,
-                      'score': score,
-                      'old_start': old_start,
-                      'old_stop': old_stop
-                  }
-                  )
 
 
 @socketio.on('check_knight_move')
@@ -144,6 +112,7 @@ def check_knight_two_steps_move(data):
                   }
                   )
 
+
 @socketio.on('new_game_visualization')
 def generate_new_game_visualization():
     pgn, fens = parse_pgn('static/PGN1.pgn')
@@ -151,6 +120,7 @@ def generate_new_game_visualization():
     print(pgn)
 
     socketio.emit('new_game_render', {'pgn': pgn, 'fens': fens})
+
 
 if __name__ == '__main__':
     socketio.run(app, debug=True)
