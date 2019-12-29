@@ -53,7 +53,7 @@ def knight_two_steps_moves_exercise():
                            moves=knight_two_steps_moves)
 
 
-@app.route('/test')
+@app.route('/games')
 def test():
     return render_template('visualization_test.html',
                            pgns=pgns)
