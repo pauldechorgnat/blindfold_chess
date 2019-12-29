@@ -21,13 +21,15 @@ def index():
 @app.route('/colors')
 def colors_exercise():
     return render_template('colors.html',
+                           colors=color_cases,
                            title='Square Color exercise')
 
 
 @app.route('/bishop_moves')
 def bishop_moves_exercise():
     return render_template('bishop_moves.html',
-                           title='Bishop Moves exercise')
+                           title='Bishop Moves exercise',
+                           moves=bishop_moves)
 
 
 @app.route('/knight_moves')
@@ -45,26 +47,6 @@ def knight_two_steps_moves_exercise():
 def test():
     return render_template('visualization_test.html')
 
-
-@socketio.on('check_color')
-def check_color(data):
-    if color_cases[data['square']] == data['color']:
-        response = 'Good!'
-    else:
-        response = 'Wrong!'
-
-    flash(response)
-    new_square = random.choice(list(color_cases.keys()))
-    score = -1 + 2 * (response == 'Good!')
-
-    socketio.emit('color_checked',
-                  {
-                      'new_square': new_square,
-                      'response': response,
-                      'score': score,
-                      'old_square': data['square']
-                  }
-                  )
 
 
 @socketio.on('check_bishop_move')
@@ -162,9 +144,11 @@ def check_knight_two_steps_move(data):
                   }
                   )
 
-@socketio.on('new_game_viz')
+@socketio.on('new_game_visualization')
 def generate_new_game_visualization():
-    pgn, fens = parse_pgn('./static/PGN.pgn')
+    pgn, fens = parse_pgn('static/PGN1.pgn')
+    print('new_game_visualization')
+    print(pgn)
 
     socketio.emit('new_game_render', {'pgn': pgn, 'fens': fens})
 

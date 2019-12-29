@@ -3,26 +3,31 @@
 {% block app_content %}
 
 <script>
-    var socket = io();
+    var colors = {{ colors | tojson | safe }};
+    var squares = Object.keys(colors);
 
-    check_color = function(color, square){
-        var square = document.getElementById('square').innerHTML;
-        socket.emit('check_color', {
-            'color': color,
-            'square': square
-        });
+    generate_new_case = function() {
+       var new_square = squares[Math.floor(Math.random() * Math.floor(64))];
+       var square = document.getElementById('square').innerHTML = new_square;
     };
 
-    socket.on('color_checked',
-        function(data){
-            document.getElementById('square').innerHTML = data['new_square'];
-            scores = scores.concat(data['score']);
-            scores = scores.slice(1, 13);
-            squares_score = squares_score.concat(data['old_square']);
-            squares_score = squares_score.slice(1, 13);
-            update_score_bar(scores, squares_score);
-            }
-    );
+    check_color = function(input) {
+        var square = document.getElementById('square').innerHTML
+        var right_response = colors[square];
+        if (right_response == input){
+            var response = 1;
+        } else {
+            var response = -1;
+        }
+        console.log('square')
+        console.log(square)
+        scores = scores.concat(response).slice(1, 13);
+        squares_score = squares_score.concat(square).slice(1, 13);
+        update_score_bar(scores, squares_score);
+
+        generate_new_case();
+
+    }
 </script>
 
 
@@ -44,7 +49,7 @@
     <div class="col-lg-12 col-sm-12 col-md-12 col-md-12">
         <div class="card-deck">
             <div class="card"
-                 onclick="check_color(1, document.getElementById('square').innerHTML); return false;">
+                 onclick="check_color(1); return false;">
                 <div class="card-body">
                     <h5 class="card-title">Light Square</h5>
                     <p class="card-text">Click here if you think that the square is light.</p>
@@ -52,7 +57,7 @@
             </div>
 
             <div class="card text-white bg-dark"
-                 onclick="check_color(0, document.getElementById('square').innerHTML); return false;">
+                 onclick="check_color(0); return false;">
                 <div class="card-body">
                     <h5 class="card-title">Dark Square</h5>
                     <p class="card-text">Click here if you think that the square is dark.</p>
