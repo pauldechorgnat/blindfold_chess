@@ -1,58 +1,113 @@
 {% extends 'base.html' %}
 
 {% block app_content %}
-<!--<script src="https://requirejs.org/docs/release/2.3.5/minified/require.js"></script>-->
-<!--<script>-->
-<!--var Chessground = require(["/static/chessground"]).Chessground;-->
-<!--</script>-->
 <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-
 <link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css"
     integrity="sha384-q94+BZtLrkL1/ohfjR8c6L+A6qzNH9R2hBLwyoAfu3i/WCvQjzL2RQJ3uNHDISdU" crossorigin="anonymous">
 <script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"
     integrity="sha384-8Vi8VHwn3vjQ9eUHUxex3JSN/NFqUg3QbPyX8kWyb93+8AC/pPWTzj+nHtbC5bxD"
     crossorigin="anonymous"></script>
+
 <div class="row">
-    <h1>Lol</h1>
+    <h1>Find the correct position</h1><br>
+</div>
+<div class="row">
+    <p class='text-muted' id='title-of-the-game'>Title of the game</p>
 </div>
 <div class="row">
     <div class="col-lg-6 col-sm-6 col-md-6 col-md-6">
-        <div id="myBoard" class="board" style="width: 100%"></div>
-        <div id="pgn" style="display:none;"></div>
+        <div class="row">
+            <div id="myBoard" class="board" style="width: 100%"></div>
+            <div id="pgn" style="display:none;"></div>
+        </div>
+
+        {% include '_score_bar.html' %}
+
     </div>
+
     <div class="col-lg-6 col-sm-6 col-md-6 col-md-6">
         <div class="form-group row">
-            <label for="number-input" class="col-6 col-form-label">Number of moves per step</label>
+
+            <div class="col-lg-6 col-sm-6 col-md-6 col-md-6">
+                <button class="btn btn-dark" style="width:100%" onclick="create_new_game();">New Game</button>
+            </div>
+            <div class="col-lg-6 col-sm-6 col-md-6 col-md-6">
+                <button class="btn btn-success" style="width:100%" onclick="check_position();">Check position</button>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="number-input" class="col-6 col-form-label">Number of moves to show</label>
             <div class="col-6">
                 <input class="form-control" type="number" value="3" id="number-input">
             </div>
         </div>
         <div class="row">
-            <button class="btn btn-dark" style="width:100%" onclick="generate_next_moves();">Generate next moves
-                PGN</button>
+            <div class="col-lg-12 col-sm-12 col-md-12 col-md-12">
+                <button class="btn btn-secondary" style="width:100%" onclick="generate_next_moves();">Show next moves
+                </button>
+            </div>
         </div>
         <div class="row">
-            <button class="btn btn-light" style="width:100%" onclick="create_new_game();">New Game</button>
+            <div class="col-lg-12 col-sm-12 col-md-12 col-md-12">
+                <br>
+                <h3>Parameters</h3>
+                <br>
+            </div>
         </div>
-        <div class="row" style="margin-top:10%">
-            <div class="card" style="width:100%;">
-                <div class="card-header">
-                    <div class="card-title">
-                        Moves <span style="float:right"><span id="number-of-steps">0</span>/<span
-                                id="total-number-of-steps">100</span> </span>
+
+        <div class="row">
+            <div class="col-lg-12 col-sm-12 col-md-12 col-md-12">
+                <div class="custom-control custom-switch">
+                    <input type="checkbox" class="custom-control-input" id="hide-new-moves">
+                    <label class="custom-control-label" for="hide-new-moves">Hide moves</label>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12 col-sm-12 col-md-12 col-md-12">
+                <div class="form-group row">
+                    <label for="number-input-seconds text-muted" class="col-8 col-form-label">
+                        Number of seconds before hiding
+                    </label>
+                    <div class="col-4">
+                        <input class="form-control" type="number" value="3" id="number-input-seconds" disabled>
+
                     </div>
                 </div>
-                <div class="card-body">
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item" id="old-pgn-container"></li>
-                        <li class="list-group-item" id="new-pgn-container"></li>
-                    </ul>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12 col-sm-12 col-md-12 col-md-12">
+                <hr>
+                <div class="custom-control custom-switch">
+                    <input type="checkbox" class="custom-control-input" id="hide-old-moves">
+                    <label class="custom-control-label" for="hide-old-moves" onchange="console.log('ok');">Hide old
+                        moves</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="row" style="margin-top:10%">
+            <div class="col-lg-12 col-sm-12 col-md-12 col-md-12">
+                <div class="card" style="width:100%;">
+                    <div class="card-header">
+                        <div class="card-title">
+                            Moves <span style="float:right"><span id="number-of-steps">0</span>/<span
+                                    id="total-number-of-steps">100</span> </span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item" id="old-pgn-container"></li>
+                            <li class="list-group-item" id="new-pgn-container"></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
 <script>
     var board = Chessboard('myBoard',
         {
@@ -68,7 +123,7 @@
     var pgn_of_the_current_game = [];
     var fens_of_the_current_game = [];
 
-    var socket = io();
+    var pgns = {{ pgns | tojson | safe }};
 
     update_fens_of_the_current_game = function (new_fens) {
         fens_of_the_current_game = new_fens;
@@ -112,45 +167,94 @@
         clean_pgn_containers();
     }
 
-    correct_game_position = function(nb_steps){
+    correct_game_position = function (nb_steps) {
         var current_fen = fens_of_the_current_game[nb_steps];
         board.position(current_fen);
     }
 
-    update_pgn = function(next_pgn){
+    update_pgn = function (next_pgn) {
         console.log('update_pgn')
         var old_pgn = document.getElementById('old-pgn-container').innerHTML;
         var old_new_pgn = document.getElementById('new-pgn-container').innerHTML;
         old_pgn = old_pgn + ' ' + old_new_pgn;
         update_container('old-pgn-container', old_pgn);
+
         update_container('new-pgn-container', next_pgn);
     }
 
-    generate_next_moves = function(){
+    generate_next_moves = function () {
         console.log('generate_next_moves')
         var steps_step = parseInt(document.getElementById('number-input').value);
         var nb_steps = parseInt(document.getElementById('number-of-steps').innerHTML);
-        console.log(steps_step)
-        console.log(nb_steps)
-        var next_pgn = pgn_of_the_current_game.slice(nb_steps, steps_step + nb_steps).join(' ');
-        document.getElementById('number-of-steps').innerHTML = nb_steps + steps_step;
-        update_pgn(next_pgn);
-    }
-
-    socket.on('new_game_render',
-        function (data) {
-            console.log(data);
-            pgn_of_the_new_game = data['pgn'];
-            fens_of_the_new_game = data['fens'];
-            set_new_game_data(pgn_of_the_new_game, fens_of_the_new_game)
-            correct_game_position(0);
+        var total_number_of_steps = parseInt(document.getElementById('total-number-of-steps').innerHTML);
+        if (steps_step + nb_steps > total_number_of_steps) {
+            var new_nb_steps = total_number_of_steps;
+        } else {
+            var new_nb_steps = steps_step + nb_steps;
         }
-    )
+
+        var next_pgn = pgn_of_the_current_game.slice(nb_steps, new_nb_steps).join(' ');
+        document.getElementById('number-of-steps').innerHTML = new_nb_steps;
+        update_pgn(next_pgn);
+        if (document.getElementById('hide-new-moves').checked) {
+            console.log('ok');
+            document.getElementById('new-pgn-container').style.display = '';
+            var nb_seconds = parseInt(document.getElementById('number-input-seconds').value);
+            setTimeout(
+                () => {
+                    document.getElementById('new-pgn-container').style.display = 'none';
+                },
+                1000 * nb_seconds)
+
+        }
+    }
 
     create_new_game = function () {
-        socket.emit('new_game_visualization');
-        
+        var new_game = pgns[Math.floor(Math.random() * pgns.length)];
+        pgn_of_the_current_game = new_game.bold_moves;
+        fens_of_the_current_game = new_game.fens;
+        document.getElementById('title-of-the-game').innerHTML = new_game.title;
+        document.getElementById('total-number-of-steps').innerHTML = Math.floor((fens_of_the_current_game.length - 1) / 2) + 1;
+        document.getElementById('number-of-steps').innerHTML = 0;
+        clean_pgn_containers();
+        board.start();
     }
+
+    check_position = function () {
+        let steps = parseInt(document.getElementById('number-of-steps').innerHTML);
+
+        let response = fens_of_the_current_game[2 * steps].includes(board.fen()) * 2 - 1;
+        squares_score = squares_score.concat(steps).slice(1, 13);
+        scores = scores.concat(response).slice(1, 13);
+        update_score_bar(scores, squares_score);
+
+        board.position(fens_of_the_current_game[2 * steps])
+
+
+    }
+
+    hide_old_moves = function () {
+        if (document.getElementById('hide-old-moves').checked) {
+            document.getElementById('old-pgn-container').style.display = 'none';
+        } else {
+            document.getElementById('old-pgn-container').style.display = '';
+        }
+    }
+
+    document.getElementById('hide-old-moves').addEventListener('change', () => { hide_old_moves() })
+    document.getElementById('hide-new-moves').addEventListener('change',
+        (event) => {
+            if (event.target.checked) {
+                document.getElementById('number-input-seconds').disabled = false;
+            } else {
+                document.getElementById('number-input-seconds').disabled = true;
+            }
+        }
+    )
+    // hide_new_moves = function() {
+    //     document.getElementById('new-pgn-container').style.display = 'none'
+
+    //     }
 
 </script>
 
