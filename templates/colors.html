@@ -47,19 +47,20 @@
 <div class="row">
     <div class="col-lg-12 col-sm-12 col-md-12 col-md-12">
         <div class="card-deck">
-            <div class="card"
-                 onclick="check_color(1); return false;">
+            <div class="card" style="width: 18rem;">
+                <img class="card-img-top" src="/static/img/chesspieces/wikipedia/bP.svg" alt="Card image cap">
                 <div class="card-body">
-                    <h5 class="card-title">Light Square</h5>
-                    <p class="card-text">Click here if you think that the square is light.</p>
+                    <h5 class="card-title">The square is white.</h5>
+                    <p class="card-text text-muted">Click here if you think that the square is white.</p>
+                    <a href="#" onclick="check_color(1); return false;" class="btn btn-dark col-12">Choose</a>
                 </div>
             </div>
-
-            <div class="card text-white bg-dark"
-                 onclick="check_color(0); return false;">
+            <div class="card text-white bg-dark" style="width: 18rem;">
+                <img class="card-img-top" src="/static/img/chesspieces/wikipedia/wP.svg" alt="Card image cap">
                 <div class="card-body">
-                    <h5 class="card-title">Dark Square</h5>
-                    <p class="card-text">Click here if you think that the square is dark.</p>
+                    <h5 class="card-title">The square is dark.</h5>
+                    <p class="card-text text-muted">Click here if you think that the square is dark.</p>
+                    <a href="#" onclick="check_color(0); return false;" class="btn btn-light col-12">Choose</a>
                 </div>
             </div>
         </div>
